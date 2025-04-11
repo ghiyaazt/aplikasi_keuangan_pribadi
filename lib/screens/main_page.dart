@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:calendar_appbar/calendar_appbar.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -23,10 +24,15 @@ class _MainPageState extends State<MainPage> {
           child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
+      appBar: CalendarAppBar(
+        onDateChanged: (value) => print(value),
+        firstDate: DateTime.now().subtract(Duration(days: 140)),
+        lastDate: DateTime.now(),
+      ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.endFloat, // FAB mengambang
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF1E1E2C),
+        color: Colors.lightBlueAccent,
         // Hapus shape dan notchMargin agar FAB tidak menyatu
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
@@ -65,7 +71,7 @@ class _MainPageState extends State<MainPage> {
         decoration:
             isMain && isSelected
                 ? BoxDecoration(
-                  color: const Color(0xFF2A2A3D),
+                  color: const Color.fromARGB(255, 26, 150, 207),
                   borderRadius: BorderRadius.circular(20),
                 )
                 : null,
@@ -73,7 +79,7 @@ class _MainPageState extends State<MainPage> {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : Colors.grey,
+              color: isSelected ? Colors.white : Colors.white,
               size: isMain ? 24 : 22,
             ),
             if (isMain && isSelected) ...[

@@ -1,7 +1,7 @@
+import 'package:aplikasi_keuanganku/screens/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
-import 'main_page.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
