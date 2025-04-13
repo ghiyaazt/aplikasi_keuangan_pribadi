@@ -28,12 +28,7 @@ class SplashScreen extends StatelessWidget {
               Icon(
                 Icons.account_balance_wallet,
                 size: 48,
-                color: const Color.from(
-                  alpha: 0.867,
-                  red: 0.075,
-                  green: 0.494,
-                  blue: 0.424,
-                ),
+                color: const Color(0xFF3B1D71)
               ),
               const SizedBox(width: 8),
               const Text(
@@ -41,12 +36,7 @@ class SplashScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color.from(
-                    alpha: 0.867,
-                    red: 0.075,
-                    green: 0.494,
-                    blue: 0.424,
-                  ),
+                  color: const Color(0xFF3B1D71)
                 ),
               ),
             ],

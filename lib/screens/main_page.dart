@@ -2,6 +2,8 @@ import 'package:aplikasi_keuanganku/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_appbar/calendar_appbar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'add_transaction_page.dart'; // ← pastikan file ini udah dibuat
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -12,18 +14,15 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 1;
+
   Widget _buildBodyContent() {
     switch (_selectedIndex) {
       case 0:
-        return Center(
-          child: Text("Goals Page"),
-        ); // ganti dengan GoalsPage nanti
+        return Center(child: Text("Goals Page"));
       case 1:
         return const HomePage();
       case 2:
-        return Center(
-          child: Text("Wallet Page"),
-        ); // ganti dengan WalletPage nanti
+        return Center(child: Text("Wallet Page"));
       default:
         return const HomePage();
     }
@@ -33,15 +32,79 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        child: FloatingActionButton(
-          onPressed: () {},
-          shape: const CircleBorder(),
-          backgroundColor: const Color(0xFF3F91F3),
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.add_event,
+        icon: Icons.add, // Tetep pakai icon plus
+        activeIcon: Icons.close,
+        backgroundColor: const Color(0xFF3F91F3),
+        foregroundColor: Colors.white,
+        overlayOpacity: 0.3,
+        spacing: 12,
+        spaceBetweenChildren: 8,
+        elevation: 8,
+        shape: const CircleBorder(),
+        children: [
+          SpeedDialChild(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddTransactionPage(type: 'Expense'),
+                ),
+              );
+            },
+            backgroundColor: Colors.white,
+            labelWidget: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF3F91F3),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.trending_down, color: Colors.red, size: 20),
+                  SizedBox(width: 6),
+                  Text(
+                    "Expense",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SpeedDialChild(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddTransactionPage(type: 'Income'),
+                ),
+              );
+            },
+            backgroundColor: Colors.white,
+            labelWidget: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF3F91F3),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.trending_up, color: Colors.green, size: 20),
+                  SizedBox(width: 6),
+                  Text(
+                    "Income",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Column(
         children: [
           Container(
@@ -61,7 +124,14 @@ class _MainPageState extends State<MainPage> {
                     print("Notifikasi ditekan");
                   },
                 ),
-                Text("MyWallet APP", style: GoogleFonts.montserrat(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),),
+                Text(
+                  "MyWallet APP",
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {
@@ -71,7 +141,6 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
           ),
-          // 📆 CalendarAppBar di bawah tombol-tombol
           CalendarAppBar(
             backButton: false,
             black: const Color(0xFF3B1D71),
@@ -84,8 +153,6 @@ class _MainPageState extends State<MainPage> {
           Expanded(child: _buildBodyContent()),
         ],
       ),
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: const Color(0xFF3B1D71),
         child: Padding(
@@ -116,19 +183,17 @@ class _MainPageState extends State<MainPage> {
   }) {
     final bool isSelected = _selectedIndex == index;
     return GestureDetector(
-      onTap:
-          () => setState(() {
-            _selectedIndex = index;
-          }),
+      onTap: () => setState(() {
+        _selectedIndex = index;
+      }),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-        decoration:
-            isMain && isSelected
-                ? BoxDecoration(
-                  color: const Color(0xFF2CA69A),
-                  borderRadius: BorderRadius.circular(20),
-                )
-                : null,
+        decoration: isMain && isSelected
+            ? BoxDecoration(
+                color: const Color(0xFF2CA69A),
+                borderRadius: BorderRadius.circular(20),
+              )
+            : null,
         child: Row(
           children: [
             Icon(icon, color: Colors.white, size: isMain ? 24 : 22),
