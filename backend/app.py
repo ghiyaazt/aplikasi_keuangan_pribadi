@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from flask_mysqldb import MySQL
-from flask_cors import CORS
+from flask_mysqldb import MySQL # type: ignore
+from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
 CORS(app)  # supaya bisa diakses dari Flutter
