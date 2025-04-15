@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class AddTransactionPage extends StatefulWidget {
   final String type; // 'Income' atau 'Expense'
@@ -23,7 +25,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   Widget build(BuildContext context) {
     final isIncome = widget.type == 'Income';
     final categories = isIncome ? incomeCategories : expenseCategories;
-
     final Color backgroundColor = isIncome ? Colors.green : Colors.red;
 
     return Scaffold(
@@ -50,20 +51,16 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 decoration: InputDecoration(
                   labelText: 'Nominal',
                   labelStyle: const TextStyle(color: Colors.white),
-                  prefixIcon: const Icon(
-                    Icons.attach_money,
-                    color: Colors.white,
+                  prefixIcon: const Icon(Icons.attach_money, color: Colors.white),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty ? 'Isi nominal' : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Isi nominal' : null,
               ),
               const SizedBox(height: 16),
 
@@ -75,26 +72,20 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 decoration: InputDecoration(
                   labelText: 'Kategori',
                   labelStyle: const TextStyle(color: Colors.white),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
                 value: _selectedCategory,
-                items:
-                    categories
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                items: categories
+                    .map((e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e, style: const TextStyle(color: Colors.white)),
+                        ))
+                    .toList(),
                 onChanged: (value) => setState(() => _selectedCategory = value),
                 validator: (value) => value == null ? 'Pilih kategori' : null,
               ),
@@ -107,11 +98,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 decoration: InputDecoration(
                   labelText: 'Deskripsi',
                   labelStyle: const TextStyle(color: Colors.white),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
@@ -143,12 +134,34 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    print(
-                      'Saved: ${_amountController.text}, $_selectedCategory, ${_descController.text}, $_selectedDate',
+                    final url = Uri.parse('http://10.0.2.2:5000/transactions'); // ganti IP jika pakai HP
+
+                    final body = {
+                      'type': widget.type,
+                      'amount': double.tryParse(_amountController.text) ?? 0,
+                      'category': _selectedCategory,
+                      'description': _descController.text,
+                      'date': _selectedDate.toIso8601String().substring(0, 10), // yyyy-MM-dd
+                    };
+
+                    final response = await http.post(
+                      url,
+                      headers: {'Content-Type': 'application/json'},
+                      body: jsonEncode(body),
                     );
-                    Navigator.pop(context);
+
+                    if (response.statusCode == 201) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Transaksi berhasil disimpan')),
+                      );
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Gagal menyimpan transaksi')),
+                      );
+                    }
                   }
                 },
                 child: Text(
